@@ -2,9 +2,9 @@ import curses
 from random import randrange, choice
 from collections import defaultdict
 
-letter_codes = [ord(ch) for ch in 'WASDRQwasdrq']
-actions = ['Up', 'Left', 'Down', 'Right', 'Restart', 'Exit']
-actions_dict = dict(zip(letter_codes, actions * 2))
+letter_codes = [ord(ch) for ch in 'WASDQRwasdqr']
+actions = ['Up', 'Left', 'Down', 'Right', 'Exit', 'Restart']
+actions_dict = dict(zip(letter_codes, actions*2))
 
 
 def get_user_action(keyboard):
@@ -33,10 +33,10 @@ class GameField(object):
         self.reset()
 
     def reset(self):
-        if self.score > self.highscore:
-            self.highscore = self.score
+        self.highscore = max(self.score, self.highscore)
         self.score = 0
-        self.field = [[0 for i in range(self.width)] for j in range(self.height)]
+        self.field = [[0 for i in range(self.width)]
+                      for j in range(self.height)]
         self.spawn()
         self.spawn()
 
@@ -50,13 +50,13 @@ class GameField(object):
                 new_row, i = [], 0
                 while i < len(row):
                     if i+1 < len(row) and row[i] == row[i+1]:
-                        new_row.append(2 * row[i])
+                        new_row.append(2*row[i])
                         self.score += 2 * row[i]
                     else:
                         new_row.append(row[i])
                 return new_row
             final_row = merge(tighten(row))
-            final_row += [0 for _ in range(len(row)-len(final_row))]
+            final_row += [0 for i in range(len(row)-len(final_row))]
             return final_row
 
         moves = dict()
